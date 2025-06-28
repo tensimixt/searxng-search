@@ -3,38 +3,32 @@ import json
 
 def search_searxng(query="elon musk", categories="news", time_range="day"):
     """
-    Search SearxNG instance for news articles
+    Search SearxNG instance for news articles.
 
     Args:
-        query (str): Search query
-        categories (str): Search categories (e.g., 'news', 'general')
-        time_range (str): Time range filter (e.g., 'day', 'week', 'month')
+        query (str): Search query.
+        categories (str): Search categories (e.g., 'news', 'general').
+        time_range (str): Time range filter (e.g., 'day', 'week', 'month').
 
     Returns:
-        dict: JSON response from SearxNG API
+        dict: JSON response from SearxNG API.
     """
-
-    # Base URL for the SearxNG instance
     base_url = "https://searxng-railway-production-65a7.up.railway.app/search"
 
-    # Parameters for the API request
+    # If you want all engines, don't include 'engines' param.
     params = {
         'q': query,
         'format': 'json',
         'categories': categories,
-        'time_range': time_range,
-        'engines':["startpage news"]
+        'time_range': time_range
+        # 'engines': 'startpage news',  # Optional: only if you want this engine
     }
 
     try:
-        # Make the HTTP GET request
         response = requests.get(base_url, params=params)
-        response.raise_for_status()  # Raise an exception for bad status codes
-
-        # Parse JSON response
+        response.raise_for_status()
         data = response.json()
         return data
-
     except requests.exceptions.RequestException as e:
         print(f"Error making request: {e}")
         return None
@@ -43,14 +37,10 @@ def search_searxng(query="elon musk", categories="news", time_range="day"):
         return None
 
 def main():
-    # Execute the search
     results = search_searxng()
-
     if results:
         print("Search Results:")
         print(json.dumps(results, indent=2))
-
-        # Extract and display just the results if available
         if 'results' in results:
             print(f"\nFound {len(results['results'])} results:")
             for i, result in enumerate(results['results'][:5], 1):  # Show first 5 results
